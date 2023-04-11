@@ -1,0 +1,19 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block navbar %}
+<ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
+    {% if current_user.is_authenticated %}
+    <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+    {% else %}
+    <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% block page_content %} {% endblock %}
+</div>
+{% endblock %}
