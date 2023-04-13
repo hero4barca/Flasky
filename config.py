@@ -19,6 +19,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    MAIL_SUPPRESS_SEND = True # os.environ.get('MAIL_SUPPRESS_SEND', 'False')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
     'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 

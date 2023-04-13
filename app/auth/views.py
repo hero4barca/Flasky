@@ -19,7 +19,6 @@ def login():
                 next = url_for('main.index')
             return redirect(next)
         flash('Invalid username or password.')
-    # assert False
     return render_template('auth/login.html', form=form)
 
 
@@ -42,8 +41,8 @@ def register():
         token = user.generate_confirmation_token()
         send_email(user.email, 'Confirm Your Account',
                 'auth/email/confirm', user=user, token=token)
-        flash('You can now login.')
-        return redirect(url_for('main.index'))
+        flash('A confirmation email has been sent to you, please confirm your account.')
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
@@ -56,9 +55,11 @@ def confirm(token):
     if current_user.confirm(token):
         db.session.commit()
         flash('You have confirmed your account. Thanks!')
+        return redirect(url_for('main.index'))
     else:
         flash('The confirmation link is invalid or has expired.')
         return redirect(url_for('main.index'))
+
 
 # redirects to 'unconfirmed view' if authenticated user is not confirmed    
 @auth.before_app_request
@@ -68,12 +69,14 @@ def before_request():
             and request.blueprint != 'auth' \
             and request.endpoint != 'static':    
         return redirect(url_for('auth.unconfirmed'))
-    
+
+
 @auth.route('/unconfirmed')
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
+
 
 @auth.route('/confirm')
 @login_required

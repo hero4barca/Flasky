@@ -17,4 +17,15 @@ def send_email(to, subject, template, **kwargs):
     msg.html = render_template(template + '.html', **kwargs)
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
+
+    if app.config['DEBUG'] == True:
+        log_email_to_console(app, msg) # logs email to console
     return thr
+
+
+def log_email_to_console(app, msg):
+    """
+    Prints email body to console in dev environment
+    """
+    app.logger.info(msg.body)
+    app.logger.info ('|=== email ends ===|')
