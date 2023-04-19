@@ -66,8 +66,6 @@ class Role(db.Model):
         db.session.commit()
         
 
-
-
 class User(UserMixin ,db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -84,6 +82,7 @@ class User(UserMixin ,db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             else:
                 self.role = Role.query.filter_by(default=True).first()
+        
 
     def __repr__(self):
         return '<User %r>' % self.username
