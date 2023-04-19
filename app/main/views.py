@@ -5,7 +5,7 @@ from .. import db
 from flask_login import login_required
 from ..decorators import admin_required, permission_required
 # from .forms import NameForm
-from ..models import Permission
+from app.models import Permission, User
 
 
 @main.route('/')
@@ -13,9 +13,10 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/user/<name>')
-def user(name):
-    return '<h1>Hello, {}!</h1>'.format(name)
+@main.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
 
 @main.route('/secret')
 @login_required
