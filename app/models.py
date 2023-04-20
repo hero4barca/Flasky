@@ -2,8 +2,8 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import login_manager
-import jwt, datetime
-from flask import current_app
+import jwt, datetime, hashlib
+from flask import current_app, request
 from . import db
 
 class Permission:
@@ -80,6 +80,7 @@ class User(UserMixin ,db.Model):
     member_since = db.Column(db.DateTime(),
     default= datetime.datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    avatar_hash = db.Column(db.String(32))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -88,6 +89,9 @@ class User(UserMixin ,db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             else:
                 self.role = Role.query.filter_by(default=True).first()
+
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = self.gravatar_hash()
 
 
     def __repr__(self):
@@ -143,6 +147,25 @@ class User(UserMixin ,db.Model):
         db.session.add(self)
         db.session.commit()
     
+    def gravatar_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+    
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if request.is_secure:
+            url = 'https://secure.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+
+        if self.avatar_hash is None and self.email :
+            self.avatar_hash = self.gravatar_hash()
+            db.session.add(self)
+            db.session.commit()
+
+        hash = self.avatar_hash 
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+                                                                url=url, hash=hash, size=size, default=default,
+                                                                rating=rating)
+
     
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
