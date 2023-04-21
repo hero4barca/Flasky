@@ -1,8 +1,9 @@
 from . import db
+from datetime import datetime, timezone, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import login_manager
-import jwt, datetime, hashlib
+import jwt, hashlib
 from flask import current_app, request
 from . import db
 
@@ -70,7 +71,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True,
-    default=datetime.utcnow)
+    default= datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
@@ -85,9 +86,8 @@ class User(UserMixin ,db.Model):
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
-    member_since = db.Column(db.DateTime(),
-    default= datetime.datetime.utcnow)
-    last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    member_since = db.Column(db.DateTime(), default= datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -121,8 +121,8 @@ class User(UserMixin ,db.Model):
         reset_token = jwt.encode(
             {
                 "confirm": self.id,
-                "exp": datetime.datetime.now(tz=datetime.timezone.utc)
-                       + datetime.timedelta(seconds=expiration)
+                "exp": datetime.now(tz=timezone.utc)
+                       + timedelta(seconds=expiration)
             },
             current_app.config['SECRET_KEY'],
             algorithm="HS256"
@@ -134,7 +134,7 @@ class User(UserMixin ,db.Model):
             data = jwt.decode(
                 token,
                 current_app.config['SECRET_KEY'],
-                leeway=datetime.timedelta(seconds=10),
+                leeway=timedelta(seconds=10),
                 algorithms=["HS256"]
             )
         except:
@@ -152,7 +152,7 @@ class User(UserMixin ,db.Model):
         return self.can(Permission.ADMIN)
     
     def ping(self):
-        self.last_seen = datetime.datetime.utcnow()
+        self.last_seen = datetime.utcnow()
         db.session.add(self)
         db.session.commit()
     
