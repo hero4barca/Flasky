@@ -65,6 +65,14 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
         
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True,
+    default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
 
 class User(UserMixin ,db.Model):
     __tablename__ = 'users'
@@ -81,6 +89,7 @@ class User(UserMixin ,db.Model):
     default= datetime.datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
