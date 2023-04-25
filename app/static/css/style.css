@@ -10,10 +10,16 @@ ul.posts {
 
 .post-details{
     display: inline-block;
-    margin-left: 2px;
+    margin-left: 10px;
     width: 95%;
 }
 
 .post-details .post-date{
     float: right;
+}
+
+.posts .post {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee ;
 }
