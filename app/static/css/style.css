@@ -1,0 +1,19 @@
+
+ul.posts {
+    padding-left: 2px;
+}
+
+.profile-thumbnail{
+    width: fit-content;
+    float: left;
+}
+
+.post-details{
+    display: inline-block;
+    margin-left: 2px;
+    width: 95%;
+}
+
+.post-details .post-date{
+    float: right;
+}
