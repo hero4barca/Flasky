@@ -127,8 +127,12 @@ class User(UserMixin ,db.Model):
             else:
                 self.role = Role.query.filter_by(default=True).first()
 
+        # generate avartar from harsh if none is saved
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = self.gravatar_hash()
+
+        # follow self
+        self.follow(self)
 
 
     def __repr__(self):
@@ -226,7 +230,15 @@ class User(UserMixin ,db.Model):
     def is_followed_by(self, user):
         if user.id is None:
             return False  
-        return self.followers.filter_by(follower_id=user.id).first() is not None     
+        return self.followers.filter_by(follower_id=user.id).first() is not None   
+
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()  
 
     
 class AnonymousUser(AnonymousUserMixin):
