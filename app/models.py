@@ -118,6 +118,7 @@ class User(UserMixin ,db.Model):
                                 backref=db.backref('followed', lazy='joined'),
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
+    
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
