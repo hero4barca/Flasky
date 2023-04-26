@@ -5,7 +5,6 @@ from flask_login import UserMixin,AnonymousUserMixin
 from . import login_manager
 import jwt, hashlib
 from flask import current_app, request
-from . import db
 from markdown import markdown
 import bleach
 
