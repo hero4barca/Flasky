@@ -1,5 +1,5 @@
 
-ul.posts {
+ul.posts, ul.comments {
     padding-left: 2px;
 }
 
@@ -8,18 +8,24 @@ ul.posts {
     float: left;
 }
 
-.post-details{
+.post-details, .comment-details{
     display: inline-block;
     margin-left: 10px;
     width: 95%;
 }
 
-.post-details .post-date{
+.post-details .post-date,
+.comment-details .comment-date {
     float: right;
 }
 
-.posts .post {
+.posts .post, .comments .comment {
     padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid #eee ;
+}
+
+ul.comments{
+    margin-top: 30px;
+    margin-left: 30px;
 }
