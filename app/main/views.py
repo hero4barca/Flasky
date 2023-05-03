@@ -19,6 +19,7 @@ def index():
         return redirect(url_for('.index'))
     
     # retrieve show followed from cookies
+    show_followed = None
     if current_user.is_authenticated:
         show_followed = bool(request.cookies.get('show_followed', ''))
     if show_followed:
@@ -68,12 +69,6 @@ def secret():
 @admin_required
 def for_admins_only():
     return "For administrators!"
-
-@main.route('/moderate')
-@login_required
-@permission_required(Permission.MODERATE)
-def for_moderators_only():
-    return "For comment moderators!"
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -225,9 +220,32 @@ def follows(username):
 @login_required
 @permission_required(Permission.MODERATE)
 def moderate():
+    # assert False
     page = request.args.get('page', 1, type=int)
     pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate( page=page,
                                                                             per_page=10,
                                                                              error_out=False)
     comments = pagination.items
     return render_template('moderate.html', comments=comments,pagination=pagination, page=page)
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_enable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate',page=request.args.get('page', 1,  type=int)))
+
+
+@main.route('/moderate/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_disable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
