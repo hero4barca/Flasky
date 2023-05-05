@@ -156,6 +156,18 @@ class User(UserMixin ,db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
     
+    def to_json(self):
+        json_user = {
+            'url': url_for('api.get_user', id=self.id),
+            'username': self.username,
+            'member_since': self.member_since,
+            'last_seen': self.last_seen,
+            'posts_url': url_for('api.get_user_posts', id=self.id),
+            'followed_posts_url': url_for('api.get_user_followed_posts', id=self.id),
+            'post_count': self.posts.count()
+            }
+        return json_user
+    
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
