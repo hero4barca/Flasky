@@ -8,6 +8,7 @@ from flask import current_app, request, url_for
 from markdown import markdown
 import bleach
 from itsdangerous import Serializer
+from app.exceptions import ValidationError
 
 class Permission:
     FOLLOW = 1
@@ -81,8 +82,7 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True,
-    default= datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default= datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post',
@@ -99,6 +99,13 @@ class Post(db.Model):
             'comment_count': self.comments.count()
             }
         return json_post
+    
+    @staticmethod
+    def from_json(json_post):
+        body = json_post.get('body')
+        if body is None or body == '':
+            raise ValidationError('post does not have a body')
+        return Post(body=body)
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
