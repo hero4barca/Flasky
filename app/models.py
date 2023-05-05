@@ -94,8 +94,8 @@ class Post(db.Model):
             'body': self.body,
             'body_html': self.body_html,
             'timestamp': self.timestamp,
-            'author_url': url_for('api.get_user', id=self.author_id),
-            'comments_url': url_for('api.get_post_comments', id=self.id),
+            # 'author_url': url_for('api.get_user', id=self.author_id),
+            # 'comments_url': url_for('api.get_post_comments', id=self.id),
             'comment_count': self.comments.count()
             }
         return json_post
