@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import login_manager
 import jwt, hashlib
-from flask import current_app, request
+from flask import current_app, request, url_for
 from markdown import markdown
 import bleach
 from itsdangerous import Serializer
@@ -87,6 +87,18 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post',
                                 lazy='dynamic')
+    
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'author_url': url_for('api.get_user', id=self.author_id),
+            'comments_url': url_for('api.get_post_comments', id=self.id),
+            'comment_count': self.comments.count()
+            }
+        return json_post
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
