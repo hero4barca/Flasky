@@ -7,6 +7,7 @@ import jwt, hashlib
 from flask import current_app, request
 from markdown import markdown
 import bleach
+from itsdangerous import Serializer
 
 class Permission:
     FOLLOW = 1
@@ -235,7 +236,20 @@ class User(UserMixin ,db.Model):
     def is_followed_by(self, user):
         if user.id is None:
             return False  
-        return self.followers.filter_by(follower_id=user.id).first() is not None   
+        return self.followers.filter_by(follower_id=user.id).first() is not None  
+
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id}).decode('utf-8') 
+    
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.filter_by(id=data['id']).first()
 
     @staticmethod
     def add_self_follows():
