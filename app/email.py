@@ -18,7 +18,7 @@ def send_email(to, subject, template, **kwargs):
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
 
-    if app.config['DEBUG'] == True:
+    if app.config['DEBUG'] == True and not app.config['TESTING'] :
         log_email_to_console(app, msg) # logs email to console
     return thr
 
