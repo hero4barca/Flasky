@@ -151,11 +151,9 @@ class User(UserMixin ,db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             else:
                 self.role = Role.query.filter_by(default=True).first()
-
         # generate avartar from harsh if none is saved
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = self.gravatar_hash()
-
         # follow self
         self.follow(self)
 
