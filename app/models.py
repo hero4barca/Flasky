@@ -94,7 +94,7 @@ class Post(db.Model):
             'body': self.body,
             'body_html': self.body_html,
             'timestamp': self.timestamp,
-            # 'author_url': url_for('api.get_user', id=self.author_id),
+            'author_url': url_for('api.get_user', id=self.author_id),
             # 'comments_url': url_for('api.get_post_comments', id=self.id),
             'comment_count': self.comments.count()
             }
@@ -168,7 +168,7 @@ class User(UserMixin ,db.Model):
             'member_since': self.member_since,
             'last_seen': self.last_seen,
             'posts_url': url_for('api.get_user_posts', id=self.id),
-            # 'followed_posts_url': url_for('api.get_user_followed_posts', id=self.id),
+            'followed_posts_url': url_for('api.get_user_followed_posts', id=self.id),
             'post_count': self.posts.count()
             }
         return json_user
