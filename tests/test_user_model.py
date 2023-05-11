@@ -1,6 +1,6 @@
 
 from app.models import User, AnonymousUser, Permission, Role, Follow
-from base_test import BaseTestCase
+from tests.base_test import BaseTestCase
 from datetime import datetime
 from app import db
 
