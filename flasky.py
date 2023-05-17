@@ -20,7 +20,7 @@ def make_shell_context():
 @click.option('--coverage/--no-coverage', default=False, 
               help='Run tests under code coverage.') # starts coverage
 @click.option("--testname", default=None, 
-              help = 'Retrieves test modules, classes or methods by given name' ) # specifies tests to run
+              help = 'Retrieves test modules, classes or methods by given name') # specifies tests to run
 def test(coverage, testname):
     """Run the unit tests."""
     if coverage and not os.environ.get('FLASK_COVERAGE'):
